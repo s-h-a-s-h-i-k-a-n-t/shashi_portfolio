@@ -1,6 +1,3 @@
-import React from "react";
-import profile from "./assets/profile.png";
-
 export default function App() {
   return (
     <div className="site">
@@ -20,7 +17,14 @@ export default function App() {
       {/* ===== HERO ===== */}
       <section className="hero">
         <div className="container hero__inner">
-          <img src={profile} alt="Shashi Kant" className="profile-pic" />
+          <img
+            src="/profile.png"
+            alt="Shashi Kant"
+            className="profile-pic"
+            width={160}
+            height={160}
+          />
+
           <h1>Data Quality & BI Consultant</h1>
           <p>
             I build parameterized IICS pipelines (CDI/CDQ), tune PL/SQL, and
