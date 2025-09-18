@@ -1,3 +1,5 @@
+import profile from "./assets/profile.png";
+
 export default function App() {
   return (
     <div className="site">
@@ -18,7 +20,7 @@ export default function App() {
       <section className="hero">
         <div className="container hero__inner">
           <img
-            src="/profile.png"
+            src={profile} // <-- use the imported variable
             alt="Shashi Kant"
             className="profile-pic"
             width={160}
