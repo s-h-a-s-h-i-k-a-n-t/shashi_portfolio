@@ -104,7 +104,7 @@ const TABLEAU_URL =
 const RESUME_URL =
   "https://raw.githubusercontent.com/s-h-a-s-h-i-k-a-n-t/iics-projects-portfolio/main/docs/Shashi_Kant_Resume.pdf";
 const GITHUB_URL = `https://github.com/${OWNER}/${REPO}`;
-const LINKEDIN_URL = "https://www.linkedin.com/in/shashi-kant-b26459130/";
+const LINKEDIN_URL = "linkedin.com/in/shashikantdataengineer";
 const YOUTUBE_URL = "https://www.youtube.com/@iicsinformaticasimplified";
 
 /* contact links - footer */
