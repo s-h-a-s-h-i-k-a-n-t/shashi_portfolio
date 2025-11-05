@@ -100,11 +100,11 @@ const SEARCH = (q: string) =>
   `https://github.com/${OWNER}/${REPO}/search?q=${encodeURIComponent(q)}`;
 
 const TABLEAU_URL =
-  "https://public.tableau.com/app/profile/shashi.kant2423/viz/Total_revenue_by_region_Sales_person/Sheet1";
+  "https://public.tableau.com/app/profile/shashi.kant2423/vizzes";
 const RESUME_URL =
   "https://raw.githubusercontent.com/s-h-a-s-h-i-k-a-n-t/iics-projects-portfolio/main/docs/Shashi_Kant_Resume.pdf";
 const GITHUB_URL = `https://github.com/${OWNER}/${REPO}`;
-const LINKEDIN_URL = "linkedin.com/in/shashikantdataengineer";
+const LINKEDIN_URL = "https://linkedin.com/in/shashikantdataengineer";
 const YOUTUBE_URL = "https://www.youtube.com/@iicsinformaticasimplified";
 
 /* contact links - footer */
@@ -832,6 +832,8 @@ export default function App() {
 
         /* MOVABLE (NON-STICKY) HEADER */
         .header{
+          position: static !important;
+          top: auto !important;
           background:#ffffff;
           border-bottom:1px solid #e8e8ef;
         }
