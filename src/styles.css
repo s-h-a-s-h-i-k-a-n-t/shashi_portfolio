@@ -1,4 +1,4 @@
-/* src/styles.css */
+/* ===== Base ===== */
 * {
   box-sizing: border-box;
 }
@@ -23,6 +23,8 @@ body {
 .center {
   text-align: center;
 }
+
+/* ===== Header ===== */
 .header {
   position: sticky;
   top: 0;
@@ -49,6 +51,8 @@ body {
 .nav a:hover {
   color: #4f46e5;
 }
+
+/* ===== Hero ===== */
 .hero {
   background: linear-gradient(180deg, #4f46e5 0%, #6d28d9 100%);
   color: #fff;
@@ -68,6 +72,8 @@ body {
   font-size: clamp(16px, 2.2vw, 20px);
   opacity: 0.95;
 }
+
+/* ===== Sections ===== */
 .section {
   padding: 72px 0;
   background: #f8fafc;
@@ -96,6 +102,8 @@ body {
 .lead--light {
   color: #e5e7eb;
 }
+
+/* ===== Grid utilities (for Skills/Projects) ===== */
 .grid {
   display: grid;
   gap: 18px;
@@ -114,6 +122,8 @@ body {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+/* ===== Cards & Buttons ===== */
 .card {
   background: #fff;
   border: 1px solid #e5e7eb;
@@ -163,38 +173,107 @@ body {
 .section--accent .btn--light:hover {
   background: #eef2ff;
 }
+
+/* ===== Footer ===== */
 .footer {
   background: #0f172a;
   color: #94a3b8;
   padding: 20px 0;
   font-size: 14px;
 }
-/* Videos */
-.video-grid {
-  display: grid;
-  gap: 18px;
+
+/* ===== Profile photo ===== */
+.profile-pic {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  margin: 0 auto 24px;
+  border: 4px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
-@media (min-width: 768px) {
-  .video-grid {
-    grid-template-columns: repeat(2, 1fr);
+
+/* Certifications: 4 on the first row, 3 on the second (centered) */
+.cert-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: center; /* centers each wrapped row */
+  align-items: stretch;
+}
+
+/* Desktop: lock each card to ~250px so 4 fit in your 1100px container */
+.cert-card {
+  flex: 0 0 250px; /* 4 * 250 + 3 * 24 = 1072px < 1100px */
+  max-width: 320px;
+  background: #fff;
+  border-radius: 14px;
+  border: 1px solid #e5e7eb;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 6px 18px rgba(2, 6, 23, 0.06);
+}
+
+/* Tablets: allow 3 per row, still centered */
+@media (max-width: 1200px) {
+  .cert-card {
+    flex: 0 0 300px;
+  } /* 3 * 300 + 2 * 24 = 948px */
+}
+
+/* Narrow: 2 per row */
+@media (max-width: 900px) {
+  .cert-card {
+    flex: 0 0 320px;
   }
 }
 
-/* 16:9 responsive iframe */
-.video {
-  position: relative;
-  width: 100%;
-  padding-top: 56.25%;
-  border-radius: 14px;
-  overflow: hidden;
+/* Mobile: 1 per row */
+@media (max-width: 600px) {
+  .cert-card {
+    flex: 0 0 100%;
+  }
 }
-.video iframe {
-  position: absolute;
-  inset: 0;
+
+/* Inner elements (unchanged) */
+.cert-img-wrap {
+  width: 100%;
+  aspect-ratio: 16/11;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+  background: #fbfbfd;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+.cert-img {
   width: 100%;
   height: 100%;
+  object-fit: contain;
+  display: block;
+  image-rendering: auto;
 }
-/* ---- Glassmorphism style ---- */
+.cert-title {
+  margin: 8px 0 4px;
+  font-size: 16px;
+  font-weight: 800;
+}
+.cert-issuer,
+.cert-date {
+  margin: 0 0 6px;
+  color: #6b7280;
+  font-size: 13px;
+}
+.cert-card .link {
+  font-weight: 700;
+  text-decoration: none;
+}
+
+/* ===== Videos (glassy section) ===== */
 .glassy {
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(12px) saturate(180%);
@@ -203,8 +282,6 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.25);
   padding: 60px 0;
 }
-
-/* Videos Grid */
 .video-grid {
   display: grid;
   gap: 28px;
@@ -215,28 +292,10 @@ body {
     grid-template-columns: repeat(2, 1fr);
   }
 }
-
-/* Video card */
-.video-card {
-  padding: 18px;
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-.video-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
-}
-
-/* Responsive video */
 .video {
   position: relative;
   width: 100%;
-  padding-top: 56.25%; /* 16:9 */
+  padding-top: 56.25%;
   border-radius: 12px;
   overflow: hidden;
   margin-bottom: 12px;
@@ -247,8 +306,6 @@ body {
   width: 100%;
   height: 100%;
 }
-
-/* YouTube link */
 .yt-link {
   color: #2563eb;
   font-weight: 600;
@@ -257,24 +314,167 @@ body {
 .yt-link:hover {
   text-decoration: underline;
 }
-/* Profile photo styling */
-.profile-pic {
-  width: 160px;
-  height: 160px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin: 0 auto 24px; /* center + spacing below */
-  display: block;
-  border: 4px solid rgba(255, 255, 255, 0.6);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+
+/* optional helpers for new sections */
+.bullets {
+  margin: 0;
+  padding-left: 1.25rem;
 }
-.profile-pic {
-  width: 160px;
-  height: 160px;
-  border-radius: 50%;
-  object-fit: cover;
+.bullets li {
+  margin: 0.4rem 0;
+}
+
+.grid--3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+@media (max-width: 900px) {
+  .grid--3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.viz-img {
+  width: 100%;
+  max-width: 900px;
   display: block;
-  margin: 0 auto 24px;
-  border: 4px solid rgba(255, 255, 255, 0.6);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  margin: 0 auto;
+  border-radius: 12px;
+}
+.viz-link {
+  display: inline-block;
+}
+
+.contact-grid {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+/* === Experience (clean three-column card on purple band) === */
+:root {
+  --xp-purple: #6c2bd9; /* band */
+  --xp-purple-2: #7c3aed; /* subtle gradient mix */
+  --xp-ink: #0f172a;
+  --xp-muted: #64748b;
+  --xp-mint: #10b981; /* icon symbol */
+  --xp-mint-100: #d1fae5; /* icon circle fill */
+  --xp-mint-200: #a7f3d0; /* icon circle border */
+  --xp-chip-bg: #eef2ff; /* purple-tinted chips */
+  --xp-chip-ink: #3730a3;
+  --xp-divider: #e5e7eb;
+}
+
+/* whole band */
+.xp-hero {
+  background: linear-gradient(
+    180deg,
+    var(--xp-purple) 0%,
+    var(--xp-purple-2) 100%
+  );
+  color: #fff;
+  padding: 70px 0 86px;
+}
+
+/* the white rounded card that sits on the band */
+.xp-card {
+  background: #fff;
+  color: var(--xp-ink);
+  border-radius: 18px;
+  border: 1px solid #eef0f6;
+  box-shadow: 0 24px 60px rgba(2, 6, 23, 0.25);
+  padding: 28px 18px 22px;
+}
+
+/* heading in the card */
+.xp-title {
+  text-align: center;
+  margin: 0 0 18px;
+  font-weight: 800;
+  letter-spacing: -0.2px;
+}
+
+/* 3 columns on desktop, stack on mobile */
+.xp-cols {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+@media (max-width: 980px) {
+  .xp-cols {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* each column */
+.xp-col {
+  padding: 28px 26px 22px;
+  position: relative;
+  text-align: center;
+}
+
+/* vertical dividers between columns (desktop only) */
+@media (min-width: 981px) {
+  .xp-col + .xp-col {
+    border-left: 1px solid var(--xp-divider);
+  }
+}
+
+/* mint circular icon */
+.xp-icon {
+  width: 62px;
+  height: 62px;
+  margin: 0 auto 12px;
+  border-radius: 9999px;
+  background: var(--xp-mint-100);
+  border: 1px solid var(--xp-mint-200);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* column heading + sub */
+.xp-h3 {
+  margin: 6px 0 6px;
+  font-weight: 800;
+}
+.xp-sub {
+  margin: 0 0 16px;
+  color: var(--xp-muted);
+  font-size: 14px;
+}
+
+/* bullets are left-aligned but centered in a narrow column for cleanliness */
+.xp-bullets {
+  list-style: disc;
+  padding-left: 1.1rem;
+  margin: 0 auto;
+  max-width: 560px;
+  text-align: left;
+}
+.xp-bullets li {
+  margin: 6px 0;
+}
+
+/* chips row */
+.xp-chiprow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 12px;
+}
+.xp-chip {
+  background: var(--xp-chip-bg);
+  color: var(--xp-chip-ink);
+  border: 1px solid #e0e7ff;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* subtle card “cap” radius look like your reference */
+.xp-card-rounded {
+  border-radius: 18px;
 }
