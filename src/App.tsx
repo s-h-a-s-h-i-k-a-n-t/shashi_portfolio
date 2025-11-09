@@ -1,6 +1,6 @@
-import { useEffect, useState, useRef, ReactNode } from "react";
+import React, { ReactNode } from "react";
 
-/* ===== Local assets (keep only what we use) ===== */
+/* ===== Local assets ===== */
 import profile from "./assets/profile.png";
 import skLogo from "./assets/sk-logo.png";
 
@@ -75,93 +75,17 @@ const CERTIFICATIONS: Cert[] = [
   },
 ];
 
-type GHItem = {
-  name: string;
-  path: string;
-  type: "file" | "dir";
-  download_url?: string;
-};
-
-type Card = {
-  base: string;
-  kind: "Mapping" | "Taskflow";
-  imageUrl: string;
-  imageBlobUrl: string;
-  docsUrlGuess: string | null;
-  zipSearchUrl?: string;
-};
-
 const OWNER = "s-h-a-s-h-i-k-a-n-t";
-const REPO = "iics-projects-portfolio";
-const RAW_PREFIX = `https://raw.githubusercontent.com/${OWNER}/${REPO}/main/`;
-const BLOB = (p: string) =>
-  `https://github.com/${OWNER}/${REPO}/blob/main/${p}`;
-const SEARCH = (q: string) =>
-  `https://github.com/${OWNER}/${REPO}/search?q=${encodeURIComponent(q)}`;
-
 const TABLEAU_URL =
   "https://public.tableau.com/app/profile/shashi.kant2423/vizzes";
-const RESUME_URL =
-  "https://raw.githubusercontent.com/s-h-a-s-h-i-k-a-n-t/iics-projects-portfolio/main/docs/Shashi_Kant_Resume.pdf";
-const GITHUB_URL = `https://github.com/${OWNER}/${REPO}`;
-const LINKEDIN_URL = "https://linkedin.com/in/shashikantdataengineer";
-const YOUTUBE_URL = "https://www.youtube.com/@iicsinformaticasimplified";
+const GITHUB_URL = `https://github.com/${OWNER}`;
+const IDEAL_ELECTRICAL_REPO =
+  "https://github.com/s-h-a-s-h-i-k-a-n-t/ideal-electricals-site";
 
-/* contact links - footer */
+/* contact links */
 const PHONE_URL = "tel:+919620988539";
 const WHATSAPP_URL = "https://wa.me/919620988539";
 const EMAIL_URL = "mailto:shashimitian@gmail.com";
-
-/* =========================
-   Helpers
-========================= */
-const baseNoExt = (name: string) =>
-  name.match(/^(.+)\.[A-Za-z0-9]+$/)?.[1] ?? name;
-
-async function ghList(path: string): Promise<GHItem[]> {
-  const cacheKey = `gh:${path}`;
-  const cached = sessionStorage.getItem(cacheKey);
-  if (cached) {
-    try {
-      return JSON.parse(cached) as GHItem[];
-    } catch {}
-  }
-  const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}?per_page=100`;
-  const res = await fetch(url, {
-    headers: { Accept: "application/vnd.github+json" },
-  });
-  if (!res.ok) throw new Error(`GitHub API ${res.status} for /${path}`);
-  const data = (await res.json()) as GHItem[];
-  sessionStorage.setItem(cacheKey, JSON.stringify(data));
-  return data;
-}
-
-function guessDocsBlobUrl(kind: Card["kind"], base: string) {
-  const prefix = kind === "Mapping" ? "Mapping%3A%20" : "Taskflow%3A%20";
-  return BLOB(`docs/${prefix}${base}.md`);
-}
-const makeZipSearchUrl = (base: string) =>
-  SEARCH(`${base} path:jobs_exports type:path`);
-
-function humanizeName(raw: string) {
-  let s = raw;
-  s = s.replace(/^(m_|tf_|dt_|mt_|mct_|mtt_)/i, "");
-  s = s.replace(/SCD[_\s]?Type[_\s]?2/gi, "SCD Type 2");
-  s = s.replace(/Type[_\s]?2/gi, "Type 2");
-  s = s.replace(/MD5/gi, "MD5");
-  s = s.replace(/[_-]/g, " ");
-  s = s.replace(/\s+/g, " ").trim();
-  s = s
-    .split(" ")
-    .map((w) =>
-      w === w.toUpperCase() && w.length <= 4
-        ? w
-        : w[0].toUpperCase() + w.slice(1).toLowerCase()
-    )
-    .join(" ");
-  s = s.replace(/\(Date MD5\)/i, "(Date + MD5)");
-  return s;
-}
 
 /* =========================
    Icons + Brand
@@ -191,6 +115,7 @@ const IconBtn = ({
       color: "#fff",
       background: "transparent",
       transition: "all .2s ease",
+      textDecoration: "none",
     }}
     onMouseEnter={(e) => {
       (e.currentTarget as HTMLAnchorElement).style.background = "#ffffff";
@@ -216,28 +141,7 @@ const IconGitHub = ({ size = 20 }: { size?: number }) => (
     <path d="M12 .5a11.3 11.3 0 0 0-3.57 22.03c.56.1.77-.24.77-.54v-1.9c-3.14.69-3.8-1.35-3.8-1.35-.51-1.3-1.23-1.64-1.23-1.64-1-.69.07-.68.07-.68 1.11.08 1.7 1.14 1.7 1.14.99 1.69 2.59 1.2 3.22.92.1-.73.39-1.2.71-1.48-2.51-.29-5.15-1.26-5.15-5.62 0-1.24.44-2.26 1.15-3.06-.12-.29-.5-1.45.11-3.01 0 0 .95-.3 3.1 1.16a10.8 10.8 0 0 1 5.65 0c2.15-1.46 3.1-1.16 3.1-1.16.6 1.56.23 2.72.11 3.01.72.8 1.15 1.82 1.15 3.06 0 4.37-2.65 5.32-5.18 5.6.4.35.76 1.03.76 2.08v3.08c0 .31.21.65.78.54A11.3 11.3 0 0 0 12 .5Z" />
   </svg>
 );
-const IconLinkedIn = ({ size = 20 }: { size?: number }) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="currentColor"
-    aria-hidden="true"
-  >
-    <path d="M4.98 3.5A2.5 2.5 0 1 1 5 8.5 2.5 2.5 0 0 1 4.98 3.5zM3 9h4v12H3zM9 9h3.8v1.64h.05c.53-1 1.83-2.05 3.77-2.05 4.03 0 4.78 2.65 4.78 6.1V21h-4v-5.3c0-1.27-.02-2.9-1.77-2.9-1.77 0-2.04 1.38-2.04 2.8V21H9z" />
-  </svg>
-);
-const IconYouTube = ({ size = 22 }: { size?: number }) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="currentColor"
-    aria-hidden="true"
-  >
-    <path d="M23.5 7.2s-.23-1.64-.95-2.36c-.9-.95-1.92-.96-2.39-1.02C16.98 3.5 12 3.5 12 3.5h-.01s-4.98 0-8.16.32c-.47.06-1.49.07-2.39 1.02C.73 5.56.5 7.2.5 7.2S.27 9.1.27 11v2c0 1.9.23 3.8.23 3.8s.23 1.64.95 2.36c.9.95 2.08.92 2.61 1.02 1.9.18 8 .32 8 .32s4.98 0 8.16-.32c.47-.06 1.49-.07 2.39-1.02.72-.72.95-2.36.95-2.36s.23-1.9.23-3.8v-2c0-1.9-.23-3.8-.23-3.8ZM9.75 14.85V8.94l6.05 2.96-6.05 2.95Z" />
-  </svg>
-);
+
 const IconTableau = ({ size = 20 }: { size?: number }) => (
   <svg
     width={size}
@@ -250,7 +154,7 @@ const IconTableau = ({ size = 20 }: { size?: number }) => (
   </svg>
 );
 
-/* SK Brand logo (image only) — name removed */
+/* SK Brand logo button */
 function BrandLogo() {
   return (
     <a
@@ -292,90 +196,6 @@ function BrandLogo() {
 }
 
 /* =========================
-   Modal (Details)
-========================= */
-function Modal({
-  open,
-  onClose,
-  title,
-  children,
-}: {
-  open: boolean;
-  onClose: () => void;
-  title: string;
-  children: ReactNode;
-}) {
-  const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    if (open) document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [open, onClose]);
-  if (!open) return null;
-  return (
-    <div
-      aria-modal="true"
-      role="dialog"
-      aria-label={title}
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
-      style={{
-        position: "fixed",
-        inset: 0,
-        background: "rgba(0,0,0,.5)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: 16,
-        zIndex: 1000,
-      }}
-    >
-      <div
-        ref={ref}
-        style={{
-          background: "#fff",
-          borderRadius: 16,
-          width: "min(900px, 96%)",
-          maxHeight: "90vh",
-          overflow: "auto",
-          boxShadow: "0 25px 60px rgba(2,6,23,.35)",
-        }}
-      >
-        <div
-          style={{
-            padding: "14px 18px",
-            borderBottom: "1px solid #eef0f6",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
-          <h3 style={{ margin: 0, fontWeight: 800 }}>{title}</h3>
-          <button
-            onClick={onClose}
-            aria-label="Close"
-            style={{
-              border: "1px solid #e5e7eb",
-              background: "white",
-              borderRadius: 10,
-              padding: "6px 10px",
-              cursor: "pointer",
-              fontWeight: 700,
-            }}
-          >
-            ✕
-          </button>
-        </div>
-        <div style={{ padding: 18 }}>{children}</div>
-      </div>
-    </div>
-  );
-}
-
-/* =========================
    FOOTER
 ========================= */
 function Footer() {
@@ -390,6 +210,7 @@ function Footer() {
     justifyContent: "center",
     color: "#fff",
     transition: "transform .15s ease",
+    textDecoration: "none",
   };
 
   return (
@@ -441,12 +262,12 @@ function Footer() {
               Shashi Kant
             </p>
             <p style={{ margin: 0, opacity: 0.7, fontSize: 13 }}>
-              Data Quality &amp; ETL Consultant
+              Frontend &amp; Full-Stack Web Developer
             </p>
           </div>
         </div>
 
-        {/* CENTER: Get in Touch + 4 icons */}
+        {/* CENTER: Get in Touch + icons */}
         <div
           style={{
             textAlign: "center",
@@ -541,36 +362,11 @@ function Footer() {
                 <path d="M2 4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h20a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H2Zm0 2h20v.01L12 13 2 6.01V6Zm0 2.24 8.78 5.74a1 1 0 0 0 1.12 0L22 8.24V18H2V8.24Z" />
               </svg>
             </a>
-
-            {/* LinkedIn */}
-            <a
-              href={LINKEDIN_URL}
-              target="_blank"
-              rel="noreferrer"
-              style={iconBase}
-              onMouseEnter={(e) =>
-                ((e.currentTarget as HTMLAnchorElement).style.transform =
-                  "translateY(-3px)")
-              }
-              onMouseLeave={(e) =>
-                ((e.currentTarget as HTMLAnchorElement).style.transform =
-                  "none")
-              }
-            >
-              <svg
-                width="25"
-                height="25"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-              >
-                <path d="M4.98 3.5A2.5 2.5 0 1 1 5 8.5 2.5 2.5 0 0 1 4.98 3.5zM3 9h4v12H3zM9 9h3.8v1.64h.05c.53-1 1.83-2.05 3.77-2.05 4.03 0 4.78 2.65 4.78 6.1V21h-4v-5.3c0-1.27-.02-2.9-1.77-2.9-1.77 0-2.04 1.38-2.04 2.8V21H9z" />
-              </svg>
-            </a>
           </div>
         </div>
       </div>
 
-      {/* divider to separate sections */}
+      {/* divider */}
       <div
         style={{
           width: "100%",
@@ -579,7 +375,7 @@ function Footer() {
         }}
       />
 
-      {/* separate copyright band */}
+      {/* copyright band */}
       <div
         style={{
           background: "#0B1020",
@@ -624,166 +420,6 @@ function Footer() {
    App
 ========================= */
 export default function App() {
-  const [mappingCards, setMappingCards] = useState<Card[]>([]);
-  const [taskflowCards, setTaskflowCards] = useState<Card[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [err, setErr] = useState<string | null>(null);
-  const [selected, setSelected] = useState<Card | null>(null);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const [mapPngs, tfPngs] = await Promise.all([
-          ghList("CDI/mappings"),
-          ghList("CDI/taskflows"),
-        ]);
-
-        const toCards = (pngs: GHItem[], kind: Card["kind"]): Card[] =>
-          pngs
-            .filter((f) => f.type === "file" && /\.png$/i.test(f.name))
-            .map((f) => {
-              const base = baseNoExt(f.name);
-              return {
-                base,
-                kind,
-                imageUrl: f.download_url || RAW_PREFIX + f.path,
-                imageBlobUrl: BLOB(f.path),
-                docsUrlGuess: guessDocsBlobUrl(kind, base),
-                zipSearchUrl:
-                  kind === "Taskflow" ? makeZipSearchUrl(base) : undefined,
-              };
-            })
-            .sort((a, b) => a.base.localeCompare(b.base));
-
-        sessionStorage.setItem(
-          "cards:mappings",
-          JSON.stringify(toCards(mapPngs, "Mapping"))
-        );
-        sessionStorage.setItem(
-          "cards:taskflows",
-          JSON.stringify(toCards(tfPngs, "Taskflow"))
-        );
-
-        setMappingCards(
-          JSON.parse(sessionStorage.getItem("cards:mappings") || "[]")
-        );
-        setTaskflowCards(
-          JSON.parse(sessionStorage.getItem("cards:taskflows") || "[]")
-        );
-      } catch (e: any) {
-        const msg = e?.message || "";
-        if (/API 403|rate|abuse/i.test(msg))
-          setErr(
-            "GitHub is rate-limiting right now. Please refresh in a minute."
-          );
-        else if (/404/.test(msg))
-          setErr(
-            "Couldn’t find portfolio folders on GitHub. Check the repo paths."
-          );
-        else setErr("Failed to load GitHub items. Please try again.");
-        try {
-          const m = sessionStorage.getItem("cards:mappings");
-          const t = sessionStorage.getItem("cards:taskflows");
-          if (m) setMappingCards(JSON.parse(m));
-          if (t) setTaskflowCards(JSON.parse(t));
-        } catch {}
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, []);
-
-  const CardsGrid = ({ items }: { items: Card[] }) => {
-    if (!items.length) {
-      return (
-        <div className="empty">
-          <p className="lead">
-            No visuals found here yet. Check the{" "}
-            <a
-              className="link"
-              href={GITHUB_URL}
-              target="_blank"
-              rel="noreferrer"
-            >
-              GitHub repo
-            </a>{" "}
-            or refresh later.
-          </p>
-        </div>
-      );
-    }
-    return (
-      <div className="grid grid--3">
-        {items.map((c) => (
-          <article
-            key={`${c.kind}:${c.base}`}
-            className="card card--lg"
-            style={{ display: "flex", flexDirection: "column" }}
-          >
-            <a
-              href={c.imageBlobUrl}
-              target="_blank"
-              rel="noreferrer"
-              title="Open image on GitHub"
-              style={{
-                display: "block",
-                textDecoration: "none",
-                color: "inherit",
-                marginBottom: 12,
-              }}
-            >
-              <img
-                src={c.imageUrl}
-                alt={`${c.base} — ${c.kind} diagram`}
-                className="viz-img"
-                style={{ width: "100%", height: "auto", borderRadius: 12 }}
-                loading="lazy"
-              />
-            </a>
-
-            <h4
-              className="card__title"
-              style={{ wordBreak: "break-word", marginBottom: 6 }}
-              title={humanizeName(c.base)}
-            >
-              {humanizeName(c.base)}
-            </h4>
-
-            <div className="chips" style={{ marginBottom: 12 }}>
-              <span className="chip">{c.kind}</span>
-            </div>
-
-            <div
-              style={{
-                marginTop: "auto",
-                display: "flex",
-                gap: 8,
-                flexWrap: "wrap",
-              }}
-            >
-              <a
-                href={c.imageBlobUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="btn btn--primary"
-              >
-                GitHub
-              </a>
-              <button
-                className="btn btn--ghost"
-                onClick={() => setSelected(c)}
-                title="Open details"
-                style={{ cursor: "pointer" }}
-              >
-                Details
-              </button>
-            </div>
-          </article>
-        ))}
-      </div>
-    );
-  };
-
   const scrollToSection = (id: string) => {
     const el = document.getElementById(id);
     if (el) {
@@ -830,7 +466,6 @@ export default function App() {
         }
         .container{ width:min(1100px, 92%); margin:0 auto; }
 
-        /* MOVABLE (NON-STICKY) HEADER */
         .header{
           position: static !important;
           top: auto !important;
@@ -867,70 +502,73 @@ export default function App() {
 
         .section{ padding:56px 0; }
         .section--muted{ background:var(--muted); }
-        .section--accent{
-          background: linear-gradient(180deg, var(--grad-start) 0%, var(--grad-end) 100%);
-          color:var(--brand-ink);
-        }
-
         .section__title{ margin:0 0 16px; font-weight:800; letter-spacing:-0.2px; text-align:center; }
-        .section__title--light{ color:#fff; }
         .lead{ margin:0 0 12px; opacity:.9; }
-        .lead--light{ color:#fff; opacity:.95; }
 
         .grid{ display:grid; gap:16px; }
         .grid--3{ grid-template-columns: repeat(3, 1fr); }
         @media (max-width: 960px){ .grid--3{ grid-template-columns:1fr; } }
 
         .card{ background:var(--card); border:1px solid #eef0f6; border-radius:16px; padding:16px; }
-        .card--lg{ padding:16px; }
+        .card--lg{ padding:18px; }
         .card__title{ margin:0 0 6px; font-weight:700; }
-        .chips{ display:flex; gap:8px; flex-wrap:wrap; }
-        .chip{ background:#eef2ff; color:#3730A3; border:1px solid #E0E7FF; padding:4px 10px; border-radius:999px; font-size:12px; font-weight:600; }
-        .btn{ border-radius:12px; padding:10px 14px; text-decoration:none; font-weight:600; display:inline-flex; align-items:center; gap:8px; }
+
+        .pill{
+          display:inline-flex;
+          align-items:center;
+          gap:6px;
+          padding:4px 10px;
+          border-radius:999px;
+          background:#EEF2FF;
+          color:#3730A3;
+          font-size:11px;
+          font-weight:600;
+          letter-spacing:0.03em;
+          text-transform:uppercase;
+        }
+
+        .hero-greeting{
+          font-family: Sora, Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+          font-weight:800;
+          letter-spacing:-0.3px;
+          line-height:1.1;
+        }
+
+        .btn{
+          border-radius:12px;
+          padding:10px 14px;
+          text-decoration:none;
+          font-weight:600;
+          display:inline-flex;
+          align-items:center;
+          gap:8px;
+          border:none;
+          cursor:pointer;
+        }
         .btn--primary{ background:var(--brand); color:#fff; }
         .btn--ghost{ background:#fff; border:1px solid #e8e8ef; color:#111827; }
-        .btn--light{ background:#ffffff; color:#111827; border:1px solid rgba(15,23,42,.15); }
 
-        :root{
-          --xp-ink:#0f172a;
-          --xp-muted:#64748B;
+        .stack-list{
+          display:flex;
+          flex-wrap:wrap;
+          gap:6px;
+          margin-top:8px;
         }
-        .xp-hero{
-          background: linear-gradient(180deg, var(--grad-start) 0%, var(--grad-end) 100%);
-          color:#fff; padding: 70px 0 86px;
+        .stack-tag{
+          padding:4px 9px;
+          border-radius:999px;
+          background:#F3F4F6;
+          font-size:11px;
+          color:#4B5563;
         }
-        .xp-card{
-          background:#fff; color:var(--xp-ink);
-          border-radius: 18px; border:1px solid #eef0f6;
-          box-shadow: 0 24px 60px rgba(2,6,23,.25);
-          padding: 28px 18px 22px;
-        }
-        .xp-title{ text-align:center; margin: 0 0 18px; font-weight: 800; letter-spacing:-0.2px; }
-        .xp-cols{ display:grid; grid-template-columns: repeat(2, 1fr); gap: 0; }
-        @media (max-width: 980px){ .xp-cols{ grid-template-columns: 1fr; } }
-        .xp-col{
-          padding: 28px 26px 22px;
-          position:relative;
-          text-align:center;
-        }
-        @media (min-width: 981px){ .xp-col + .xp-col{ border-left:1px solid #E5E7EB; } }
 
-        .xp-icon{
-          width:60px; height:60px;
-          margin: 0 auto 12px;
-          border-radius:9999px;
-          background: var(--icon-teal);
-          display:flex; align-items:center; justify-content:center;
-          box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        .cert-grid{
+          display:flex;
+          flex-wrap:wrap;
+          gap:24px;
+          justify-content:center;
+          align-items:stretch;
         }
-        .xp-icon svg{ color: var(--icon-navy); }
-
-        .xp-h3{ margin: 6px 0 6px; font-weight: 800; }
-        .xp-sub{ margin: 0 0 16px; color: var(--xp-muted); font-size:14px; }
-        .xp-bullets{ list-style: disc; padding-left: 1.1rem; margin: 0 auto; max-width: 560px; text-align: left; }
-        .xp-bullets li{ margin: 6px 0; }
-
-        .cert-grid{ display:flex; flex-wrap:wrap; gap:24px; justify-content:center; align-items:stretch; }
         .cert-card{
           flex: 0 0 250px; max-width: 320px; background:#fff; border-radius:14px; border:1px solid #e5e7eb; padding:16px;
           display:flex; flex-direction:column; box-shadow: 0 6px 18px rgba(2,6,23,.06);
@@ -940,10 +578,101 @@ export default function App() {
         .cert-title{ margin:8px 0 4px; font-size:16px; font-weight:800; }
         .cert-issuer, .cert-date{ margin:0 0 6px; color:#6b7280; font-size:13px; }
 
-        .hero-greeting{ font-family: Sora, Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; font-weight:800; letter-spacing:-0.3px; line-height:1.1; }
+        /* EXPERIENCE HERO */
+        :root{
+          --xp-ink:#0f172a;
+          --xp-muted:#64748B;
+        }
+        .xp-hero{
+          background: linear-gradient(180deg, var(--grad-start) 0%, var(--grad-end) 100%);
+          padding: 70px 0 86px;
+          color:#fff;
+        }
+
+        /* section-level title above card (centered like screenshot 2) */
+        .xp-main-title{
+          text-align:center;
+          margin: 0 0 14px;
+          font-weight:800;
+          letter-spacing:-0.2px;
+        }
+
+        .xp-intro{
+          text-align:center;
+          margin: 0 0 24px;
+          color: #e5e7f5;
+          font-size:14px;
+          max-width: 720px;
+          margin-left:auto;
+          margin-right:auto;
+        }
+
+        .xp-card{
+          background:#fff;
+          color:var(--xp-ink);
+          border-radius: 18px;
+          border:1px solid #eef0f6;
+          box-shadow: 0 24px 60px rgba(2,6,23,.25);
+          padding: 28px 20px 22px;
+          max-width: 980px;
+          margin: 0 auto;       /* centered card */
+        }
+
+        .xp-cols{
+          display:grid;
+          grid-template-columns: repeat(2, 1fr);
+          column-gap: 0;
+        }
+        @media (max-width: 980px){
+          .xp-cols{
+            grid-template-columns:1fr;
+          }
+        }
+        .xp-col{
+          padding: 24px 26px 22px;
+          position:relative;
+          text-align:left;
+        }
+        @media (min-width: 981px){
+          .xp-col + .xp-col{
+            border-left:1px solid #E5E7EB;
+          }
+        }
+        .xp-icon{
+          width:60px;
+          height:60px;
+          border-radius:9999px;
+          background: var(--icon-teal);
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          margin-bottom:10px;
+          box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+        .xp-icon svg{
+          color: var(--icon-navy);
+        }
+        .xp-h3{
+          margin: 4px 0 4px;
+          font-weight: 800;
+        }
+        .xp-sub{
+          margin: 0 0 8px;
+          color: var(--xp-muted);
+          font-size: 13px;
+        }
+        .xp-bullets{
+          list-style: disc;
+          padding-left: 1.1rem;
+          margin: 0;
+          font-size: 14px;
+        }
+        .xp-bullets li{
+          margin: 5px 0;
+        }
       `}</style>
 
-      {/* ===== HEADER (non-sticky, with section links) ===== */}
+      {/* ===== HEADER ===== */}
       <header className="header">
         <div
           className="container header__inner"
@@ -953,17 +682,12 @@ export default function App() {
             <BrandLogo />
           </div>
           <nav className="top-nav" aria-label="Primary navigation">
-            <button onClick={() => scrollToSection("skills")}>
-              Technical Skills
-            </button>
-            <button onClick={() => scrollToSection("experience")}>
-              Professional Experience
-            </button>
-            <button onClick={() => scrollToSection("sample-work")}>
+            <button onClick={() => scrollToSection("skills")}>Skills</button>
+            <button onClick={() => scrollToSection("projects")}>
               Projects
             </button>
-            <button onClick={() => scrollToSection("certifications")}>
-              Certifications
+            <button onClick={() => scrollToSection("experience")}>
+              Experience
             </button>
           </nav>
         </div>
@@ -977,12 +701,13 @@ export default function App() {
           background:
             "linear-gradient(180deg, var(--grad-start) 0%, var(--grad-end) 100%)",
           color: "white",
-          paddingTop: 56,
-          paddingBottom: 56,
+          paddingTop: 64,
+          paddingBottom: 64,
           textAlign: "center",
         }}
       >
         <div className="container">
+          {/* Profile image centered */}
           <img
             src={profile}
             alt="Shashi Kant"
@@ -993,12 +718,14 @@ export default function App() {
               objectFit: "cover",
               border: "4px solid #ffffff",
               boxShadow: "0 8px 20px rgba(0,0,0,0.25)",
-              marginBottom: 20,
+              display: "block",
+              margin: "0 auto 20px",
             }}
           />
+
           <h1
             className="section__title hero-greeting"
-            style={{ color: "white" }}
+            style={{ color: "white", marginBottom: 10 }}
           >
             Hi, I'm Shashi. Nice to meet you.
           </h1>
@@ -1006,59 +733,64 @@ export default function App() {
             className="lead"
             style={{
               color: "rgba(255,255,255,0.9)",
-              maxWidth: "850px",
-              margin: "0 auto 20px",
+              maxWidth: "820px",
+              margin: "0 auto 18px",
               lineHeight: 1.6,
             }}
           >
-            Data Quality &amp; ETL Trainer and Freelance Consultant with
-            hands-on experience delivering projects for{" "}
-            <strong>Ideal Electrical Solutions Pvt Ltd</strong> and mentoring{" "}
-            <strong>800+ students</strong> in Informatica (IICS/PowerCenter),
-            SQL, and Tableau. I simplify complex data integration and quality
-            challenges into real-world solutions: cleansing, profiling,{" "}
-            <strong>data modeling</strong>, and BI dashboards.
+            <strong>Frontend / Full-Stack Web Developer</strong> who enjoys
+            turning real requirements into production-ready React and Next.js
+            applications — building fast, scalable UIs and end-to-end solutions
+            for e-commerce platforms, portfolios, and data dashboards.
+          </p>
+
+          <p
+            style={{
+              marginBottom: 18,
+              color: "rgba(255,255,255,0.95)",
+              textAlign: "center",
+              fontSize: "15px",
+            }}
+          >
+            💻 JavaScript · TypeScript · React · Next.js · Node.js · Tailwind
+            CSS · REST APIs · Auth · CI/CD
           </p>
           <p
             style={{
               marginBottom: 14,
               color: "rgba(255,255,255,0.95)",
               textAlign: "center",
-              fontSize: "16px",
+              fontSize: "15px",
             }}
           >
             📍 New Delhi &nbsp;|&nbsp; 📞{" "}
             <a
-              href="tel:+919620988539"
+              href={PHONE_URL}
               style={{ color: "#fff", textDecoration: "underline" }}
             >
               +91-96209-88539
             </a>
             &nbsp;|&nbsp; 📧{" "}
             <a
-              href="mailto:shashimitian@gmail.com"
+              href={EMAIL_URL}
               style={{ color: "#fff", textDecoration: "underline" }}
             >
               shashimitian@gmail.com
             </a>
           </p>
+
+          {/* Social row – GitHub + Tableau */}
           <div
             style={{
               display: "flex",
               gap: 12,
               justifyContent: "center",
               alignItems: "center",
-              marginTop: 10,
+              marginTop: 18,
             }}
           >
             <IconBtn title="GitHub" href={GITHUB_URL}>
               <IconGitHub />
-            </IconBtn>
-            <IconBtn title="LinkedIn" href={LINKEDIN_URL}>
-              <IconLinkedIn />
-            </IconBtn>
-            <IconBtn title="YouTube" href={YOUTUBE_URL}>
-              <IconYouTube />
             </IconBtn>
             <IconBtn title="Tableau Public" href={TABLEAU_URL}>
               <IconTableau />
@@ -1067,10 +799,22 @@ export default function App() {
         </div>
       </section>
 
-      {/* ===== TECHNICAL SKILLS ===== */}
+      {/* ===== SKILLS ===== */}
       <section id="skills" className="section section--muted">
         <div className="container">
           <h2 className="section__title">Technical Skills</h2>
+          <p
+            className="lead"
+            style={{
+              textAlign: "center",
+              maxWidth: 720,
+              margin: "0 auto 24px",
+            }}
+          >
+            I focus on building end-to-end web experiences — from responsive UI
+            and state management to APIs, auth, and deployment.
+          </p>
+
           <div
             style={{
               display: "flex",
@@ -1079,289 +823,423 @@ export default function App() {
               gap: "24px",
             }}
           >
-            {/* BI */}
+            {/* Core Web */}
             <div
+              className="card"
               style={{
-                flex: "1 1 280px",
+                flex: "1 1 260px",
                 maxWidth: "320px",
-                background: "#fff",
-                border: "1px solid #e5e7eb",
-                borderRadius: "14px",
-                padding: "20px",
                 boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
               }}
             >
-              <h3 style={{ fontWeight: 700, marginBottom: 10 }}>
-                BI &amp; Visualization
-              </h3>
+              <h3 className="card__title">Core Web</h3>
               <ul style={{ margin: 0, paddingLeft: 18, lineHeight: 1.8 }}>
-                <li>Power BI</li>
-                <li>Tableau</li>
-                <li>IBM Cognos Analytics</li>
+                <li>HTML5, Semantic markup, Accessibility basics</li>
+                <li>Modern CSS3 (Flexbox, Grid, Responsive layouts)</li>
+                <li>JavaScript (ES6+), TypeScript basics</li>
               </ul>
             </div>
 
-            {/* DB & Programming */}
+            {/* Frontend Frameworks */}
             <div
+              className="card"
               style={{
-                flex: "1 1 280px",
+                flex: "1 1 260px",
                 maxWidth: "320px",
-                background: "#fff",
-                border: "1px solid #e5e7eb",
-                borderRadius: "14px",
-                padding: "20px",
                 boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
               }}
             >
-              <h3 style={{ fontWeight: 700, marginBottom: 10 }}>
-                Databases &amp; Programming
-              </h3>
+              <h3 className="card__title">Frontend Frameworks</h3>
               <ul style={{ margin: 0, paddingLeft: 18, lineHeight: 1.8 }}>
-                <li>SQL</li>
-                <li>PL/SQL</li>
-                <li>Python</li>
+                <li>React (hooks, context, custom hooks)</li>
+                <li>Next.js (pages, routing, data fetching)</li>
+                <li>Component-driven UI architecture</li>
               </ul>
             </div>
 
-            {/* ETL tools */}
+            {/* Styling & UI */}
             <div
+              className="card"
               style={{
-                flex: "1 1 280px",
+                flex: "1 1 260px",
                 maxWidth: "320px",
-                background: "#fff",
-                border: "1px solid #e5e7eb",
-                borderRadius: "14px",
-                padding: "20px",
                 boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
               }}
             >
-              <h3 style={{ fontWeight: 700, marginBottom: 10 }}>ETL Tools</h3>
+              <h3 className="card__title">Styling &amp; Design Systems</h3>
               <ul style={{ margin: 0, paddingLeft: 18, lineHeight: 1.8 }}>
-                <li>Informatica PowerCenter</li>
-                <li>Informatica IICS (CDQ / CDI)</li>
-                <li>Informatica Cloud Data Integration Services</li>
+                <li>Tailwind CSS</li>
+                <li>Responsive design for mobile &amp; desktop</li>
+                <li>Reusable components &amp; layout systems</li>
               </ul>
             </div>
 
-            {/* DQ */}
+            {/* Backend & APIs */}
             <div
+              className="card"
               style={{
-                flex: "1 1 280px",
+                flex: "1 1 260px",
                 maxWidth: "320px",
-                background: "#fff",
-                border: "1px solid #e5e7eb",
-                borderRadius: "14px",
-                padding: "20px",
                 boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
               }}
             >
-              <h3 style={{ fontWeight: 700, marginBottom: 10 }}>
-                Data Quality &amp; Rule Management
-              </h3>
+              <h3 className="card__title">Backend &amp; APIs</h3>
               <ul style={{ margin: 0, paddingLeft: 18, lineHeight: 1.8 }}>
-                <li>Data Profiling</li>
-                <li>Data Cleansing &amp; Standardization</li>
-                <li>Deduplication &amp; Matching</li>
-                <li>Rule Specifications &amp; Scorecards</li>
-                <li>Reference Tables &amp; Labeler</li>
+                <li>Node.js &amp; Express basics</li>
+                <li>REST API design &amp; integration</li>
+                <li>JSON, Axios / Fetch, error handling</li>
               </ul>
             </div>
 
-            {/* Cloud */}
+            {/* Auth & Security */}
             <div
+              className="card"
               style={{
-                flex: "1 1 280px",
+                flex: "1 1 260px",
                 maxWidth: "320px",
-                background: "#fff",
-                border: "1px solid #e5e7eb",
-                borderRadius: "14px",
-                padding: "20px",
                 boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
               }}
             >
-              <h3 style={{ fontWeight: 700, marginBottom: 10 }}>
-                Cloud &amp; Warehousing
-              </h3>
+              <h3 className="card__title">Authentication &amp; Security</h3>
               <ul style={{ margin: 0, paddingLeft: 18, lineHeight: 1.8 }}>
-                <li>AWS</li>
-                <li>Azure</li>
-                <li>Snowflake (Cloud Data Warehouse)</li>
-                <li>Data Governance</li>
+                <li>JWT-based login &amp; protected routes</li>
+                <li>Role-based access (admin vs user)</li>
+                <li>Form validation, basic input sanitization</li>
               </ul>
             </div>
 
-            {/* Git / CI */}
+            {/* Tooling & DevOps */}
             <div
+              className="card"
               style={{
-                flex: "1 1 280px",
+                flex: "1 1 260px",
                 maxWidth: "320px",
-                background: "#fff",
-                border: "1px solid #e5e7eb",
-                borderRadius: "14px",
-                padding: "20px",
                 boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
               }}
             >
-              <h3 style={{ fontWeight: 700, marginBottom: 10 }}>
-                Version Control &amp; CI/CD
-              </h3>
+              <h3 className="card__title">Tooling &amp; Deployment</h3>
               <ul style={{ margin: 0, paddingLeft: 18, lineHeight: 1.8 }}>
-                <li>Git &amp; GitHub</li>
-                <li>Jenkins (ETL CI/CD)</li>
-                <li>Informatica Git Integration</li>
-                <li>Deployment Automation</li>
+                <li>Git &amp; GitHub (branches, PRs)</li>
+                <li>Vite, npm, environment variables</li>
+                <li>Netlify / Vercel deployment, CI/CD basics</li>
               </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ===== PROFESSIONAL EXPERIENCE SECTION ===== */}
-      <section id="experience" className="xp-hero">
-        <div className="container">
-          <div className="xp-card">
-            <h2 className="xp-title">Professional Experience</h2>
-
-            <div
-              className="xp-cols"
-              style={{ gridTemplateColumns: "repeat(2, 1fr)" }}
-            >
-              {/* LEFT CARD */}
-              <div className="xp-col">
-                <div className="xp-icon" aria-hidden="true">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    width="28"
-                    height="28"
-                    fill="none"
-                    stroke="#0A0F29"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-                    <path d="M20 22H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14v19z" />
-                    <line x1="16" y1="2" x2="16" y2="22" />
-                    <line x1="8" y1="8" x2="12" y2="8" />
-                    <line x1="8" y1="12" x2="12" y2="12" />
-                  </svg>
-                </div>
-
-                <h3 className="xp-h3">
-                  Independent ETL / Data Quality Trainer &amp; Consultant
-                </h3>
-                <p className="xp-sub">Feb 2021 – Oct 2024</p>
-                <p className="xp-sub">Workshops · Bootcamps · 1:1 Mentorship</p>
-
-                <ul className="xp-bullets">
-                  <li>
-                    Delivered structured training and mentored 800+ learners
-                    across Informatica ETL, SQL, and Tableau.
-                  </li>
-                  <li>
-                    Designed curriculum and hands-on labs covering cleansing,
-                    dedupe, rule specification, and data modeling.
-                  </li>
-                  <li>
-                    Conducted doubt-clearing sessions and project-based case
-                    studies for real-world problem-solving.
-                  </li>
-                  <li>
-                    Created and maintained multiple ETL data pipelines
-                    integrating diverse data sources.
-                  </li>
-                  <li>
-                    Project-based learning and industry-aligned curriculum for
-                    ETL, DQ, and BI.
-                  </li>
-                </ul>
-              </div>
-
-              {/* RIGHT CARD */}
-              <div className="xp-col">
-                <div className="xp-icon" aria-hidden="true">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    width="28"
-                    height="28"
-                    fill="none"
-                    stroke="#0A0F29"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M10 6h4V5a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v1Z" />
-                    <rect x="3" y="7" width="18" height="11" rx="2" />
-                    <path d="M3 12h18" />
-                  </svg>
-                </div>
-
-                <h3 className="xp-h3">
-                  Data Quality &amp; ETL Consultant — Ideal Electrical Solutions
-                  Pvt. Ltd.
-                </h3>
-                <p className="xp-sub">Oct 2024 - Current (Project-based)</p>
-
-                <ul className="xp-bullets">
-                  <li>
-                    Designed and deployed end-to-end pipelines in IICS (CDI
-                    &amp; CDQ), integrating multiple sources.
-                  </li>
-                  <li>
-                    Migrated DQ rules to IICS CDQ, improving validation and
-                    reducing maintenance.
-                  </li>
-                  <li>
-                    Implemented CDI mappings with dynamic parameters &amp;
-                    reusable transformations.
-                  </li>
-                  <li>
-                    Automated scorecards and exception monitoring, cutting
-                    manual verification.
-                  </li>
-                  <li>
-                    Built multi-source load orchestration for Oracle, SQL
-                    Server, Snowflake.
-                  </li>
-                  <li>
-                    Added governance via reference tables, DQ metrics, and
-                    business rules.
-                  </li>
-                </ul>
-              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* ===== PROJECTS ===== */}
-      <section id="sample-work" className="section">
+      <section id="projects" className="section">
         <div className="container">
           <h2 className="section__title">Projects</h2>
 
-          <h3
-            className="section__title"
-            style={{ marginTop: 0, marginBottom: 12 }}
-          >
-            Sample Mappings
-          </h3>
-          {loading && <p className="lead">Loading GitHub items…</p>}
-          {err && <p className="lead">Error: {err}</p>}
-          {!loading && !err && <CardsGrid items={mappingCards} />}
+          <div className="grid grid--3">
+            {/* Project 1 – uses IDEAL_ELECTRICAL_REPO */}
+            <article className="card card--lg">
+              <p className="pill" style={{ marginBottom: 10 }}>
+                <span>E-commerce · Real-world</span>
+              </p>
+              <h3 className="card__title">
+                Ideal Electrical Solutions — E-commerce Platform
+              </h3>
+              <p className="lead" style={{ fontSize: 14, marginBottom: 10 }}>
+                Full-stack web app for a multi-vendor electrical marketplace:
+                product catalog, cart, checkout flow, and admin management.
+              </p>
+              <ul style={{ paddingLeft: 18, margin: "0 0 10px", fontSize: 14 }}>
+                <li>Responsive product listing, filters, and detail pages</li>
+                <li>
+                  JWT-based authentication (login, register, protected pages)
+                </li>
+                <li>Admin panel to manage products, vendors, and orders</li>
+              </ul>
+              <div className="stack-list">
+                <span className="stack-tag">React</span>
+                <span className="stack-tag">Next.js</span>
+                <span className="stack-tag">Node.js</span>
+                <span className="stack-tag">Tailwind CSS</span>
+                <span className="stack-tag">REST API</span>
+                <span className="stack-tag">JWT Auth</span>
+              </div>
+              <div style={{ marginTop: 14, display: "flex", gap: 8 }}>
+                <a
+                  href={IDEAL_ELECTRICAL_REPO}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn btn--primary"
+                >
+                  View Project on GitHub
+                </a>
+              </div>
+            </article>
 
-          <h3 className="section__title" style={{ marginTop: 32 }}>
-            Taskflows
-          </h3>
-          {!loading && !err && <CardsGrid items={taskflowCards} />}
+            {/* Project 2 */}
+            <article className="card card--lg">
+              <p className="pill" style={{ marginBottom: 10 }}>
+                <span>Portfolio · Vite + React</span>
+              </p>
+              <h3 className="card__title">Developer Portfolio Website</h3>
+              <p className="lead" style={{ fontSize: 14, marginBottom: 10 }}>
+                This site — a single-page application showcasing skills,
+                projects, and experience with smooth in-page navigation.
+              </p>
+              <ul style={{ paddingLeft: 18, margin: "0 0 10px", fontSize: 14 }}>
+                <li>Custom layout with reusable sections and components</li>
+                <li>Responsive design with focus on readability</li>
+                <li>Integrated GitHub and Tableau links</li>
+              </ul>
+              <div className="stack-list">
+                <span className="stack-tag">React</span>
+                <span className="stack-tag">TypeScript</span>
+                <span className="stack-tag">Vite</span>
+                <span className="stack-tag">Custom CSS</span>
+              </div>
+              <div style={{ marginTop: 14, display: "flex", gap: 8 }}>
+                <a
+                  href={GITHUB_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn btn--primary"
+                >
+                  View Code (GitHub)
+                </a>
+              </div>
+            </article>
+
+            {/* Project 3 */}
+            <article className="card card--lg">
+              <p className="pill" style={{ marginBottom: 10 }}>
+                <span>Dashboard · Auth</span>
+              </p>
+              <h3 className="card__title">Admin Dashboard &amp; Analytics</h3>
+              <p className="lead" style={{ fontSize: 14, marginBottom: 10 }}>
+                Admin dashboard concept for monitoring orders, revenue, and user
+                activity with protected routes and role-based access.
+              </p>
+              <ul style={{ paddingLeft: 18, margin: "0 0 10px", fontSize: 14 }}>
+                <li>JWT auth and role-based route protection</li>
+                <li>Reusable cards, tables, and charts layout</li>
+                <li>API-driven widgets for metrics and activity feed</li>
+              </ul>
+              <div className="stack-list">
+                <span className="stack-tag">React</span>
+                <span className="stack-tag">Tailwind CSS</span>
+                <span className="stack-tag">Node.js</span>
+                <span className="stack-tag">REST API</span>
+              </div>
+              <div style={{ marginTop: 14, display: "flex", gap: 8 }}>
+                <a
+                  href={GITHUB_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn btn--primary"
+                >
+                  View Code (GitHub)
+                </a>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== EXPERIENCE HERO (centered header in each card) ===== */}
+      <section id="experience" className="xp-hero">
+        <div className="container">
+          <h2 className="xp-main-title">Professional Experience</h2>
+          <p className="xp-intro">
+            I combine frontend engineering with a strong understanding of data
+            and ETL, which helps me design UIs that actually match real business
+            flows.
+          </p>
+
+          <div className="xp-card">
+            <div className="xp-cols">
+              {/* LEFT COLUMN */}
+              <div className="xp-col">
+                {/* icon + role + dates centered */}
+                <div
+                  style={{
+                    textAlign: "center",
+                    marginBottom: 12,
+                  }}
+                >
+                  <div className="xp-icon" aria-hidden="true">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      width="28"
+                      height="28"
+                      fill="none"
+                      stroke="#0A0F29"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                      <path d="M20 22H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14v19z" />
+                      <line x1="16" y1="2" x2="16" y2="22" />
+                      <line x1="8" y1="8" x2="12" y2="8" />
+                      <line x1="8" y1="12" x2="12" y2="12" />
+                    </svg>
+                  </div>
+
+                  <h3
+                    className="xp-h3"
+                    style={{
+                      marginTop: 6,
+                      marginBottom: 4,
+                      textAlign: "center",
+                    }}
+                  >
+                    Freelance Frontend Developer
+                  </h3>
+                  <p
+                    className="xp-sub"
+                    style={{ margin: 0, textAlign: "center" }}
+                  >
+                    Sep. 2023 – Oct. 2024 · Remote &amp; Project-based
+                  </p>
+                </div>
+
+                {/* bullets stay left-aligned */}
+                <ul className="xp-bullets">
+                  <li>
+                    Designed and developed responsive, interactive UIs using
+                    React.js, Next.js, and Tailwind CSS.
+                  </li>
+                  <li>
+                    Translated client ideas into pixel-perfect layouts, ensuring
+                    cross-browser and mobile compatibility.
+                  </li>
+                  <li>
+                    Integrated APIs and dynamic data rendering for dashboards,
+                    e-commerce, and portfolio projects.
+                  </li>
+                  <li>
+                    Optimized performance through lazy loading, code splitting,
+                    and image optimization.
+                  </li>
+                  <li>
+                    Used GitHub for version control and deployed production
+                    builds to Netlify and Vercel.
+                  </li>
+                  <li>
+                    Collaborated with non-technical clients, transforming
+                    requirements into clean, maintainable frontend code.
+                  </li>
+                  <li>
+                    Focused on modern UI/UX design principles, accessibility,
+                    and smooth user interactions.
+                  </li>
+                </ul>
+              </div>
+
+              {/* RIGHT COLUMN */}
+              <div className="xp-col">
+                {/* icon + role + dates centered */}
+                <div
+                  style={{
+                    textAlign: "center",
+                    marginBottom: 12,
+                  }}
+                >
+                  <div className="xp-icon" aria-hidden="true">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      width="28"
+                      height="28"
+                      fill="none"
+                      stroke="#0A0F29"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M10 6h4V5a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v1Z" />
+                      <rect x="3" y="7" width="18" height="11" rx="2" />
+                      <path d="M3 12h18" />
+                    </svg>
+                  </div>
+
+                  <h3
+                    className="xp-h3"
+                    style={{
+                      marginTop: 6,
+                      marginBottom: 4,
+                      textAlign: "center",
+                    }}
+                  >
+                    Data &amp; Web Solutions Consultant — Ideal Electrical
+                    Solutions Pvt. Ltd.
+                  </h3>
+                  <p
+                    className="xp-sub"
+                    style={{ margin: 0, textAlign: "center" }}
+                  >
+                    Oct. 2024 – Current · Project-based
+                  </p>
+                </div>
+
+                {/* bullets stay left-aligned */}
+                <ul className="xp-bullets">
+                  <li>
+                    Engineered a full-stack e-commerce platform connecting
+                    vendors and customers across 80+ cities.
+                  </li>
+                  <li>
+                    Built the frontend with React &amp; Next.js, implementing
+                    responsive layouts, reusable components, and dynamic product
+                    listings.
+                  </li>
+                  <li>
+                    Developed a secure backend using Node.js &amp; Express,
+                    integrating JWT-based authentication and role-based access
+                    for admins, vendors, and customers.
+                  </li>
+                  <li>
+                    Implemented a complete shopping-cart system, order
+                    management flow, and payment logic simulation for a seamless
+                    user experience.
+                  </li>
+                  <li>
+                    Integrated the web layer with Informatica-driven data
+                    pipelines and analytics dashboards to display real-time
+                    vendor performance insights.
+                  </li>
+                  <li>
+                    Focused on clean navigation, search, filters, and checkout
+                    optimization for high usability on both desktop and mobile.
+                  </li>
+                  <li>
+                    Deployed the application to Vercel, with continuous updates
+                    from GitHub CI/CD pipelines.
+                  </li>
+                  <li>
+                    Designed the architecture to handle real-world, messy
+                    business data, ensuring reliability and scalability.
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
       {/* ===== CERTIFICATIONS ===== */}
-      <section id="certifications" className="section section--muted">
+      <section id="certifications" className="section">
         <div className="container">
-          <h2 className="section__title">Certifications</h2>
+          <h2 className="section__title">Learning &amp; Certifications</h2>
+          <p
+            className="lead"
+            style={{
+              textAlign: "center",
+              maxWidth: 720,
+              margin: "0 auto 24px",
+            }}
+          >
+            Strong fundamentals in programming, SQL, and analytics support the
+            way I design frontend and full-stack solutions.
+          </p>
         </div>
         <div className="container">
           <div className="cert-grid">
@@ -1383,6 +1261,7 @@ export default function App() {
                   href={c.link}
                   target="_blank"
                   rel="noopener noreferrer"
+                  style={{ fontSize: 13, fontWeight: 600 }}
                 >
                   View credential →
                 </a>
@@ -1394,72 +1273,6 @@ export default function App() {
 
       {/* FOOTER */}
       <Footer />
-
-      {/* ===== DETAILS MODAL ===== */}
-      <Modal
-        open={!!selected}
-        onClose={() => setSelected(null)}
-        title={selected ? humanizeName(selected.base) : ""}
-      >
-        {selected && (
-          <div
-            style={{
-              display: "grid",
-              gap: 16,
-              gridTemplateColumns: "1fr",
-              alignItems: "start",
-            }}
-          >
-            <img
-              src={selected.imageUrl}
-              alt={selected.base}
-              style={{
-                width: "100%",
-                height: "auto",
-                borderRadius: 12,
-                border: "1px solid #e5e7eb",
-              }}
-            />
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-              <a
-                className="btn btn--primary"
-                href={selected.imageBlobUrl}
-                target="_blank"
-                rel="noreferrer"
-              >
-                Open on GitHub
-              </a>
-              {selected.docsUrlGuess && (
-                <a
-                  className="btn btn--ghost"
-                  href={selected.docsUrlGuess}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Docs (guessed)
-                </a>
-              )}
-              {selected.kind === "Taskflow" && selected.zipSearchUrl && (
-                <a
-                  className="btn btn--ghost"
-                  href={selected.zipSearchUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Find Export ZIP
-                </a>
-              )}
-            </div>
-            <div style={{ marginTop: 8 }}>
-              <h4 style={{ margin: "12px 0 6px" }}>Overview</h4>
-              <p style={{ margin: 0, color: "#334155" }}>
-                We’ll add a concise description, inputs/outputs, and key steps
-                here later.
-              </p>
-            </div>
-          </div>
-        )}
-      </Modal>
     </div>
   );
 }
